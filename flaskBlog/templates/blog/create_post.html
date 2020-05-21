@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<main class="container colums">
+    <form action="" method="post" class="column is-5 is-offset-4">
+        <legend class="title is-2">{{ legend }}</legend>
+            {{ form.hidden_tag() }}
+
+            <div class="field">
+                {% if form.title.errors %}
+                    <div class="control has-icons-left">
+                        {{ form.title(class="input is-danger", placeholder="Title") }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-heading"></i>
+                        </span>
+                    </div>
+                    {% for error in form.title.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                {% else %}
+                    <div class="control has-icons-left">
+                        {{ form.title(class="input", placeholder="Title") }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-heading"></i>
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="field">
+                {% if form.content.errors %}
+                    <div class="control">
+                        {{ form.content(class="textarea", placeholder="Write your message") }}
+                    </div>
+                    {% for error in form.content.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                {% else %}
+                    <div class="control">
+                        {{ form.content(class="textarea", placeholder="Write your message") }}
+                    </div>
+                {% endif %}
+            </div>
+
+            {{ form.submit(class="button is-link") }}
+    </form>
+</main>
+{% endblock %}

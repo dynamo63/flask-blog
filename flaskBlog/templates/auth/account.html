@@ -1,0 +1,183 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<main>
+    <header class="hero is-dark is-bold">
+        <section class="hero-body">
+            <div class="container level">
+                <div class="level-left">
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <h1 class="title is-1">{{ current_user.username }}</h1>
+                            <br>
+                            <h2 class="subtitle">{{ current_user.email }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="level-item">
+                        <figure class="image is-128x128">
+                            <img src="{{ image_file }}" alt="">
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </header>
+
+    <section class="container colums">
+        <form action="" method="POST" class="column is-4" enctype="multipart/form-data">
+            <legend class="heading title is-3">User Settings</legend>
+
+            {{ form.hidden_tag() }}
+
+            <div class="field">
+                {% if form.username.errors %}
+                    <div class="control has-icons-left">
+                        {{ form.username(class="input is-danger", placeholder="Username") }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div>
+                    {% for error in form.username.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                {% else %}
+                    <div class="control has-icons-left">
+                        {{ form.username(class="input", placeholder="Username") }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="field">
+                {% if form.email.errors %}
+                    <div class="control has-icons-left">
+                        {{ form.email(class="input is-danger", placeholder="Email") }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                    </div>
+                    {% for error in form.email.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                {% else %}
+                    <div class="control has-icons-left">
+                        {{ form.email(class="input", placeholder="Email") }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="field">
+                <div id="profile" class="file has-name is-primary">
+                    <label class="file-label">
+                      {{ form.image(class="file-input") }}
+                      <span class="file-cta">
+                        <span class="file-icon">
+                          <i class="fas fa-upload"></i>
+                        </span>
+                        <span class="file-label">
+                          Choose an picture...
+                        </span>
+                      </span>
+                      <span class="file-name">
+                        No file uploaded
+                      </span>
+                    </label>
+                </div>
+                {% if form.image.errors %}
+                    {% for error in form.image.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            {{ form.submit(class="button  is-link") }}
+        </form>
+    </section>
+
+    <section>
+        <h1 class="title is-2 has-text-centered">Mes Posts</h1>
+        <div class="container">
+            <section class="columns">
+                {% for post in posts %}
+                    <div class="column is-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-header-title">
+                                    {{ post.title }}
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="content">
+                                    {{ post.content| truncate(150, True) }}
+                                </div>
+                                <p class="has-text-grey-light is-size-6">Published by {{ post.author.username }}</p>
+                            </div>
+                            <footer class="card-footer">
+                                <a href="{{ url_for('detail_post', slug=post.slug) }}" class="card-footer-item">Voir Plus</a>
+                                <a href="{{ url_for('update_post', slug=post.slug) }}" class="card-footer-item ">Update</a>
+                                <a href="{{ url_for('delete_post', id=post.id) }}" class="card-footer-item has-text-danger btn-delete">Delete</a>
+                            </footer>
+                        </div>
+                    </div>
+                {% endfor %}
+            </section>
+        </div>
+    </section>
+
+    <div class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="content has-background-white is-medium box">
+                <h2 class="title is-2">Are you sure to delete this post?</h2>
+                <div class="buttons">
+                    <button class="button is-danger" id="btn-submit">Yes</button>
+                    <button class="button is-white">No</button>
+                </div>
+            </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script>
+        const btnDeleteItem = document.getElementById('btn-submit');
+        const btnCloseModal = document.getElementsByClassName('modal-close')[0]
+        const fileInput = document.querySelector('#profile input[type=file]');
+        fileInput.onchange = () => {
+            if (fileInput.files.length > 0) {
+            const fileName = document.querySelector('#profile .file-name');
+            fileName.textContent = fileInput.files[0].name;
+            }
+        }
+
+        btnCloseModal.onclick = () => document.querySelector('.modal').classList.remove('is-active');
+        let url;
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.onclick = event => {
+                event.preventDefault();
+                document.querySelector('.modal').classList.add('is-active');
+                console.log(event.target.href);
+                url = event.target.href;
+            }
+        })
+
+        btnDeleteItem.onclick = () => {
+            fetch(url, {
+                method:'DELETE'
+            }).then(res => res.json())
+            .then(data => {
+                btnCloseModal.click();
+                Swal.fire('Success !!',data["success"],'success')
+            })
+            .catch(err => console.error(err));
+        };
+    </script>
+</main>
+{% endblock %}

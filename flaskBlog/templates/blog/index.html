@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block staticfiles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+{% block content %}
+    <main>
+        <header class="hero is-dark is-bold">
+            <section class="hero-body">
+                <div class="container">
+                    <h1 class="title">Home Page</h1>
+                    <h2 class="subtitle is-4">Article List</h2>
+                </div>
+            </section>
+        </header>
+
+        <div class="container articles">
+            <section class="columns">
+                {% for post in posts %}
+                    <div class="column is-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-header-title">
+                                    {{ post.title }}
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="content">
+                                    {{ post.content| truncate(150, True) }}
+                                </div>
+                                <p class="has-text-grey-light is-size-6">Published by {{ post.author.username }}</p>
+                            </div>
+                            <footer class="card-footer">
+                                <a href="{{ url_for('detail_post', slug=post.slug) }}" class="card-footer-item">Voir Plus</a>
+                            </footer>
+                        </div>
+                    </div>
+                {% endfor %}
+            </section>
+        </div>
+    </main>
+{% endblock %}

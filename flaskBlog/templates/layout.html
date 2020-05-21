@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block staticfiles %}{% endblock %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <style>
+          .flash-message{
+            position: absolute;
+            bottom: 5%;
+            left: 3%;
+          }
+        </style>
+      {% endif %}
+    {% endwith %}
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#">
+                <img src="{{ url_for('static', filename='img/logo.png') }}"/>
+            </a>
+      
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+      
+        <div id="navbarMenu" class="navbar-menu">
+
+          <div class="navbar-start">
+              <a class="navbar-item" href="{{ url_for('home') }}">
+                  Home
+              </a>
+      
+              <a class="navbar-item" href="{{ url_for('about') }}">
+                  About
+              </a>
+          </div>
+      
+          <div class="navbar-end">
+              {% if current_user.is_authenticated %}
+                <a href="{{ url_for('new_post') }}" class="navbar-item">
+                  New Post
+                </a>
+                <a href="{{ url_for('account', username= current_user.username) }}" class="navbar-item">
+                  Profile
+                </a>
+                <a href="{{ url_for('logout') }}" class="navbar-item">
+                  Logout
+                </a>
+              {% else %}
+                <div class="navbar-item">
+                  <div class="buttons">
+                    <a class="button is-primary" href="{{ url_for('register') }}">
+                      <strong>Sign up</strong>
+                    </a>
+                    <a class="button is-light" href="{{ url_for('login') }}">
+                      Log in
+                    </a>
+                  </div>
+                </div>
+              {% endif %}
+          </div>
+
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-message">
+          {% for category, message in messages %}
+            <div class="notification is-{{ category }}">
+              <button class="delete"></button>
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+        <!-- On ajoute un evenement pour le bouton de notification -->
+        <script>
+          document.querySelectorAll('.notification .delete').forEach(btn => {
+            const notificationElt = btn.parentElement;
+            btn.addEventListener('click', () => {
+              notificationElt.remove();
+            })
+          })
+        </script>
+      {% endif %}
+    {% endwith %}
+    <script>
+      const navbarMenuElt = document.querySelector('.navbar-menu');
+      document.querySelector('.navbar-burger').onclick = event => {
+        event.target.classList.toggle('is-active');
+        navbarMenuElt.classList.toggle('is-active');
+      }
+    </script>
+</body>
+</html>

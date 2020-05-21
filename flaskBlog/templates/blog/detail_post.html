@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<main>
+    <header class="hero is-bold">
+        <div class="hero-body">
+          <div class="container">
+            <h1 class="title">
+              {{ post.title }}
+            </h1>
+            <h2 class="subtitle">
+              Published by {{ post.author.username }}
+            </h2>
+          </div>
+        </div>
+      </header>
+
+      <section class="container content is-medium">
+          <p class="has-text-black">{{ post.content }}</p>
+          <p class="is-size-6">Posted {{ post.created_at| date_format }}</p>
+      </section>
+</main>
+{% endblock %}
