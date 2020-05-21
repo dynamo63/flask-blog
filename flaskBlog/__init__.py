@@ -8,7 +8,7 @@ from .config import Development, Production
 pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
-app.config.from_object(Production if os.environ.get('ENV') == 'production' else Development())
+app.config.from_object(Production() if os.environ.get('ENV') == 'production' else Development())
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
