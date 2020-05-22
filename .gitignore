@@ -1,0 +1,9 @@
+# The Environnement variable...
+.env
+
+# IDE Specific files
+.vscode/
+
+#  Cache files  Python
+__pycache__/
+*.pyc
