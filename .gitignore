@@ -1,5 +1,6 @@
 # The Environnement variable...
 .env
+venv/
 
 # IDE Specific files
 .vscode/

@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(100), nullable=False, default='default.png')
     password = db.Column(db.String(70), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_of_birth = db.Column(db.Date, nullable=True)
 
     def __repr__(self):
         return f"Username {self.username}({self.email})"
